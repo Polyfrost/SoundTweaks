@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm") version "2.2.10" apply false
     id("dev.deftu.gradle.multiversion-root")
 }
 
