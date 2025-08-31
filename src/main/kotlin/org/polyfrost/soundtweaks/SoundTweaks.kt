@@ -3,12 +3,12 @@ package org.polyfrost.soundtweaks
 //#if FABRIC
 //$$ import net.fabricmc.api.ModInitializer;
 //#elseif FORGE
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.common.event.FMLInitializationEvent
 //#endif
 import dev.deftu.omnicore.client.OmniClient.getInstance
 import net.minecraft.client.audio.SoundEventAccessorComposite
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import org.polyfrost.soundtweaks.config.SoundTweaksConfig
 import org.polyfrost.soundtweaks.mixins.SoundHandlerAccessor
 import org.polyfrost.soundtweaks.mixins.SoundRegistryAccessor
@@ -30,23 +30,28 @@ class SoundTweaks
         //#if FORGE
         event: FMLInitializationEvent
         //#endif
-    ) {
-        // Forge requires the config to be initialized during boot, fabric doesn't
-        // since im alr doing this, a lateinit var might be better..?
-        config
-    }
+    ) {}
+
     companion object {
         const val ID = "@MOD_ID@"
         const val NAME = "@MOD_NAME@"
         const val VERSION = "@MOD_VERSION@"
         const val MC = "@MC_VERSION@"
 
+        val volumes = mutableMapOf<ResourceLocation, Float>()
+
         @JvmStatic
-        val config: SoundTweaksConfig by lazy { SoundTweaksConfig() }
+        lateinit var config: SoundTweaksConfig
+
+        @JvmStatic
+        fun onReloadResourceManager() {
+            config = SoundTweaksConfig()
+            println("meow")
+        }
 
         fun getSounds(): MutableMap<ResourceLocation, SoundEventAccessorComposite> {
-            val registry = (getInstance().soundHandler as SoundHandlerAccessor).getSoundRegistry()
-            return (registry as SoundRegistryAccessor).getSounds()
+            val registry = (getInstance().soundHandler as? SoundHandlerAccessor)?.getSoundRegistry()
+            return (registry as? SoundRegistryAccessor)?.getSounds() ?: mutableMapOf()
         }
     }
 }

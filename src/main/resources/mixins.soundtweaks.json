@@ -1,14 +1,16 @@
 {
   "compatibilityLevel": "${java_version}",
   "minVersion": "0.8",
-  "package": "org.polyfrost.soundtweaks",
+  "package": "org.polyfrost.soundtweaks.mixins",
   "refmap": "mixins.${mod_id}.refmap.json",
   "injectors": {
     "maxShiftBy": 5
   },
   "client": [
-    "mixins.SoundHandlerAccessor",
-    "mixins.SoundRegistryAccessor"
+    "PositionedSoundMixin",
+    "SimpleReloadableResourceManagerMixin",
+    "SoundHandlerAccessor",
+    "SoundRegistryAccessor"
   ],
   "verbose": true
 }

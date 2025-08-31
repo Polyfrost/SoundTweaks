@@ -1,25 +1,35 @@
 package org.polyfrost.soundtweaks.config
 
-import net.minecraft.util.ResourceLocation
-import org.polyfrost.oneconfig.api.config.v1.KtConfig
+import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
+import org.polyfrost.oneconfig.api.config.v1.Tree
+import org.polyfrost.oneconfig.api.config.v1.Visualizer
+import org.polyfrost.oneconfig.utils.v1.dsl.visualizer
 import org.polyfrost.soundtweaks.SoundTweaks
+import org.polyfrost.soundtweaks.SoundTweaks.Companion.getSounds
+import org.polyfrost.soundtweaks.SoundTweaks.Companion.volumes
 
-class SoundTweaksConfig : KtConfig("${SoundTweaks.ID}_${SoundTweaks.MC}", SoundTweaks.NAME, Category.QOL) {
+class SoundTweaksConfig : Config("${SoundTweaks.ID}_${SoundTweaks.MC}.json", SoundTweaks.NAME, Category.QOL) {
 
-    val volumes = mutableMapOf<ResourceLocation, Float>()
-
-    init {
-        SoundTweaks.getSounds().forEach { (location, sound) ->
-            tree.put(
-                Properties.functional(
-                    { volumes[location] ?: 1.0f },
-                    { volumes[location] = it },
-                    location.toString(),
-                    location.toString(),
-                    type = Float::class.java
+    @Suppress("UnstableApiUsage")
+    override fun makeTree(): Tree {
+        return super.makeTree().apply {
+            getSounds().forEach { (location, sound) ->
+                put(
+                    Properties.functional(
+                        { volumes[location] ?: 100.0f },
+                        { volumes[location] = it },
+                        location.toString().replace(".", "_"),
+                        location.toString(),
+                        type = Float::class.java
+                    ).apply {
+                        visualizer = Visualizer.SliderVisualizer::class.java
+                        metadata?.put("min", 0f)
+                        metadata?.put("max", 200f)
+                        metadata?.put("step", 1f)
+                    }
                 )
-            )
+            }
         }
     }
 
