@@ -12,5 +12,8 @@
     "SoundHandlerAccessor",
     "SoundRegistryAccessor"
   ],
-  "verbose": true
+  "verbose": true,
+  "mixins": [
+    "RegistrySimpleAccessor"
+  ]
 }

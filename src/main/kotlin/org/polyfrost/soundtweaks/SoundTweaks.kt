@@ -3,13 +3,14 @@ package org.polyfrost.soundtweaks
 //#if FABRIC
 //$$ import net.fabricmc.api.ModInitializer;
 //#elseif FORGE
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
 //#endif
 import dev.deftu.omnicore.client.OmniClient.getInstance
 import net.minecraft.client.audio.SoundEventAccessorComposite
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import org.polyfrost.soundtweaks.config.SoundTweaksConfig
+import org.polyfrost.soundtweaks.mixins.RegistrySimpleAccessor
 import org.polyfrost.soundtweaks.mixins.SoundHandlerAccessor
 import org.polyfrost.soundtweaks.mixins.SoundRegistryAccessor
 
@@ -30,7 +31,8 @@ class SoundTweaks
         //#if FORGE
         event: FMLInitializationEvent
         //#endif
-    ) {}
+    ) {
+    }
 
     companion object {
         const val ID = "@MOD_ID@"
@@ -39,6 +41,13 @@ class SoundTweaks
         const val MC = "@MC_VERSION@"
 
         val volumes = mutableMapOf<ResourceLocation, Float>()
+
+        private val isSchizoAsm = runCatching {
+            listOf(
+                "zone.rong.loliasm.api.mixins.RegistrySimpleExtender",
+                "mirror.normalasm.api.mixins.RegistrySimpleExtender"
+            ).any { Class.forName(it, false, this::class.java.getClassLoader()) != null }
+        }.getOrElse { false }
 
         @JvmStatic
         lateinit var config: SoundTweaksConfig
@@ -50,7 +59,7 @@ class SoundTweaks
 
         fun getSounds(): MutableMap<ResourceLocation, SoundEventAccessorComposite> {
             val registry = (getInstance().soundHandler as? SoundHandlerAccessor)?.getSoundRegistry()
-            return (registry as? SoundRegistryAccessor)?.getSounds() ?: mutableMapOf()
+            return (if (isSchizoAsm) (registry as? RegistrySimpleAccessor)?.registryObjects else (registry as? SoundRegistryAccessor)?.sounds) ?: mutableMapOf()
         }
     }
 }
