@@ -46,7 +46,6 @@ class SoundTweaks
         @JvmStatic
         fun onReloadResourceManager() {
             config = SoundTweaksConfig()
-            println("meow")
         }
 
         fun getSounds(): MutableMap<ResourceLocation, SoundEventAccessorComposite> {
