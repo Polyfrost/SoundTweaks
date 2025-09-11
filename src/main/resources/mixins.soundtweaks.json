@@ -1,19 +1,17 @@
 {
-  "compatibilityLevel": "${java_version}",
-  "minVersion": "0.8",
-  "package": "org.polyfrost.soundtweaks.mixins",
-  "refmap": "mixins.${mod_id}.refmap.json",
-  "injectors": {
-    "maxShiftBy": 5
-  },
-  "client": [
-    "PositionedSoundMixin",
-    "SimpleReloadableResourceManagerMixin",
-    "SoundHandlerAccessor",
-    "SoundRegistryAccessor"
-  ],
-  "verbose": true,
-  "mixins": [
-    "RegistrySimpleAccessor"
-  ]
+    "compatibilityLevel": "${java_version}",
+    "minVersion": "0.8",
+    "package": "org.polyfrost.soundtweaks.mixins",
+    "refmap": "mixins.${mod_id}.refmap.json",
+    "injectors": {
+        "maxShiftBy": 5
+    },
+    "client": [
+        "PositionedSoundMixin",
+        "RegistrySimpleAccessor",
+        "SimpleReloadableResourceManagerMixin",
+        "SoundHandlerAccessor",
+        "SoundRegistryAccessor"
+    ],
+    "verbose": true
 }
