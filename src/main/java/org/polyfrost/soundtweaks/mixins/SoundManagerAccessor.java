@@ -1,3 +1,4 @@
+//~identifier
 package org.polyfrost.soundtweaks.mixins;
 
 import net.minecraft.client.sounds.SoundManager;

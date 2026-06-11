@@ -11,7 +11,7 @@ val modid = property("mod.id")
 val modname = property("mod.name")
 val modversion = property("mod.version")
 val mcversion = property("minecraft_version")
-val mcRange = property("mc_range") ?: mcversion
+val mcRange = property("mc_range")?.takeUnless { it == "[VERSIONED]" } ?: mcversion
 val fabricAPI = property("fabric-api")
 
 base {

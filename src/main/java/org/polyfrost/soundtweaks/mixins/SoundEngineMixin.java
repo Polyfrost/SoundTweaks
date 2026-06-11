@@ -15,7 +15,7 @@ public class SoundEngineMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(FFF)F", ordinal = 0)
     )
     private float soundtweaks$uncapVolume(float value, float min, float max, Operation<Float> original) {
-        if (SoundTweaks.config.removeVolumeCap) {
+        if (SoundTweaks.getConfig() != null && SoundTweaks.getConfig().removeVolumeCap) {
             return Math.max(value, min);
         }
         return original.call(value, min, max);

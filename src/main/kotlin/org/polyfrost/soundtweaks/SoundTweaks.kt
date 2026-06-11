@@ -1,19 +1,15 @@
 package org.polyfrost.soundtweaks
 
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.fabricmc.api.ModInitializer
-import net.kyori.adventure.platform.modcommon.impl.client.BossHealthOverlayBridge.listener
 import net.minecraft.client.Minecraft
 import net.minecraft.client.sounds.WeighedSoundEvents
-import net.minecraft.resources.Identifier
-import net.minecraft.server.packs.PackType
-import net.minecraft.server.packs.resources.ResourceManager
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener
+import org.polyfrost.oneconfig.api.event.v1.EventManager
+import org.polyfrost.oneconfig.api.event.v1.events.ResourceFinishedLoading
 import org.polyfrost.soundtweaks.config.SoundTweaksConfig
 import org.polyfrost.soundtweaks.mixins.SoundManagerAccessor
+import net.minecraft.resources.Identifier
 
-
-object SoundTweaks : ModInitializer, ResourceManagerReloadListener {
+object SoundTweaks : ModInitializer {
     const val ID = "@MOD_ID@"
     const val NAME = "@MOD_NAME@"
     const val VERSION = "@MOD_VERSION@"
@@ -22,22 +18,15 @@ object SoundTweaks : ModInitializer, ResourceManagerReloadListener {
     val volumes = mutableMapOf<Identifier, Float>()
 
     override fun onInitialize() {
-        val id = Identifier.fromNamespaceAndPath(ID, "sound_getter")
-        //? >= 26.1 {
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(id, this)
-        //? } else
-        //ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(id, this)
+        EventManager.register(ResourceFinishedLoading::class) { _ ->
+            config = SoundTweaksConfig()
+            config?.preload()
+            println("meow")
+        }
     }
-
-    override fun onResourceManagerReload(resourceManager: ResourceManager) {
-        config = SoundTweaksConfig()
-        config.preload()
-        println("meow")
-    }
-
 
     @JvmStatic
-    lateinit var config: SoundTweaksConfig
+    var config: SoundTweaksConfig? = null
 
     fun getSounds(): MutableMap<Identifier, WeighedSoundEvents> {
         val soundManager = Minecraft.getInstance().soundManager
