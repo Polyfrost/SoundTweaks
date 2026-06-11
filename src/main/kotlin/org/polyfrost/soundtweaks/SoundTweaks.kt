@@ -1,65 +1,46 @@
 package org.polyfrost.soundtweaks
 
-//#if FABRIC
-//$$ import net.fabricmc.api.ModInitializer;
-//#elseif FORGE
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
-//#endif
-import dev.deftu.omnicore.api.client.sound.OmniClientSound
-import net.minecraft.client.audio.SoundEventAccessorComposite
-import net.minecraft.util.ResourceLocation
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader
+import net.fabricmc.api.ModInitializer
+import net.kyori.adventure.platform.modcommon.impl.client.BossHealthOverlayBridge.listener
+import net.minecraft.client.Minecraft
+import net.minecraft.client.sounds.WeighedSoundEvents
+import net.minecraft.resources.Identifier
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import org.polyfrost.soundtweaks.config.SoundTweaksConfig
-import org.polyfrost.soundtweaks.mixins.RegistrySimpleAccessor
-import org.polyfrost.soundtweaks.mixins.SoundHandlerAccessor
-import org.polyfrost.soundtweaks.mixins.SoundRegistryAccessor
+import org.polyfrost.soundtweaks.mixins.SoundManagerAccessor
 
-//#if FORGE-LIKE
-@Mod(modid = SoundTweaks.ID, name = SoundTweaks.NAME, version = SoundTweaks.VERSION)
-//#endif
-class SoundTweaks
-//#if FABRIC
-//$$ : ModInitializer
-//#endif
-{
-    //#if FABRIC
-    //$$ override
-    //#elseif FORGE
-    @Mod.EventHandler
-    //#endif
-    fun onInitialize(
-        //#if FORGE
-        event: FMLInitializationEvent
-        //#endif
-    ) {
+
+object SoundTweaks : ModInitializer, ResourceManagerReloadListener {
+    const val ID = "@MOD_ID@"
+    const val NAME = "@MOD_NAME@"
+    const val VERSION = "@MOD_VERSION@"
+    const val MC = "@MC_VERSION@"
+
+    val volumes = mutableMapOf<Identifier, Float>()
+
+    override fun onInitialize() {
+        val id = Identifier.fromNamespaceAndPath(ID, "sound_getter")
+        //? >= 26.1 {
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(id, this)
+        //? } else
+        //ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(id, this)
     }
 
-    companion object {
-        const val ID = "@MOD_ID@"
-        const val NAME = "@MOD_NAME@"
-        const val VERSION = "@MOD_VERSION@"
-        const val MC = "@MC_VERSION@"
+    override fun onResourceManagerReload(resourceManager: ResourceManager) {
+        config = SoundTweaksConfig()
+        config.preload()
+        println("meow")
+    }
 
-        val volumes = mutableMapOf<ResourceLocation, Float>()
 
-        private val isSchizoAsm = runCatching {
-            listOf(
-                "zone.rong.loliasm.api.mixins.RegistrySimpleExtender",
-                "mirror.normalasm.api.mixins.RegistrySimpleExtender"
-            ).any { Class.forName(it, false, this::class.java.getClassLoader()) != null }
-        }.getOrElse { false }
+    @JvmStatic
+    lateinit var config: SoundTweaksConfig
 
-        @JvmStatic
-        lateinit var config: SoundTweaksConfig
-
-        @JvmStatic
-        fun onReloadResourceManager() {
-            config = SoundTweaksConfig()
-        }
-
-        fun getSounds(): MutableMap<ResourceLocation, SoundEventAccessorComposite> {
-            val registry = (OmniClientSound.soundManager as? SoundHandlerAccessor)?.getSoundRegistry()
-            return (if (isSchizoAsm) (registry as? RegistrySimpleAccessor)?.registryObjects else (registry as? SoundRegistryAccessor)?.sounds) ?: mutableMapOf()
-        }
+    fun getSounds(): MutableMap<Identifier, WeighedSoundEvents> {
+        val soundManager = Minecraft.getInstance().soundManager
+        return (soundManager as? SoundManagerAccessor)?.registry ?: mutableMapOf()
     }
 }
