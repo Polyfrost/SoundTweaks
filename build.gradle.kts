@@ -1,44 +1,151 @@
-@file:Suppress("UnstableApiUsage", "PropertyName")
-
-import dev.deftu.gradle.utils.GameSide
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    java
-    kotlin("jvm")
-    id("dev.deftu.gradle.multiversion")
-    id("dev.deftu.gradle.tools")
-    id("dev.deftu.gradle.tools.resources")
-    id("dev.deftu.gradle.tools.bloom")
-    id("dev.deftu.gradle.tools.shadow")
-    id("dev.deftu.gradle.tools.minecraft.loom")
-    id("dev.deftu.gradle.tools.minecraft.releases")
+    id("dev.kikugie.loom-back-compat")
+    id("org.jetbrains.kotlin.jvm") version "2.3.0"
+    id("dev.deftu.gradle.bloom") version "0.2.0"
 }
 
-toolkitLoomHelper {
-    useOneConfig {
-        version = "1.0.0-alpha.167"
-        loaderVersion = "1.1.0-alpha.49"
+val modid = property("mod.id")
+val modname = property("mod.name")
+val modversion = property("mod.version")
+val mcversion = property("minecraft_version")
+val mcRange = property("mc_range")?.takeUnless { it == "[VERSIONED]" } ?: mcversion
+val fabricAPI = property("fabric-api")
 
-        usePolyMixin = true
-        polyMixinVersion = "0.8.4+build.6"
+base {
+    archivesName.set(property("mod.id") as String)
+}
 
-        applyLoaderTweaker = true
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    google()
 
-        for (module in arrayOf("commands", "config", "config-impl", "events", "internal", "ui", "utils")) {
-            +module
+    maven("https://maven.parchmentmc.org")
+    maven("https://repo.polyfrost.org/releases")
+    maven("https://repo.polyfrost.org/snapshots")
+    maven("https://maven.gegy.dev/releases")
+
+    maven("https://maven.logix.dev/snapshots")
+    maven("https://nexus.prsm.wtf/repository/maven-public/maven-repo/releases/")
+    maven("https://repo.hypixel.net/repository/Hypixel/")
+    maven("https://maven.deftu.dev/releases")
+
+    maven("https://maven.fabricmc.net/releases")
+    maven("https://jitpack.io") {
+        content { includeGroupAndSubgroups("com.github") }
+    }
+    maven("https://maven.bawnorton.com/releases") {
+        content { includeGroup("com.github.bawnorton.mixinsquared") }
+    }
+    maven("https://maven.azureaaron.net/releases") {
+        content { includeGroup("net.azureaaron") }
+    }
+    maven("https://redirector.kotlinlang.org/maven/compose-dev")
+}
+
+loom {
+    runConfigs.all {
+        ideConfigGenerated(stonecutter.current.isActive)
+        runDir = "../../run" // This sets the run folder for all mc versions to the same folder. Remove this line if you want individual run folders.
+    }
+
+    runConfigs.remove(runConfigs["server"]) // Removes server run configs
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:${property("minecraft_version")}")
+
+    val hasOfficialMappings = findProperty("has_official_mappings")?.toString()?.toBoolean() ?: true
+    if (hasOfficialMappings) {
+        @Suppress("UnstableApiUsage")
+        mappings(loom.layered {
+            officialMojangMappings()
+            optionalProp("${property("parchment_version")}") {
+                parchment("org.parchmentmc.data:parchment-${property("minecraft_version")}:$it@zip")
+            }
+            optionalProp("${property("yalmm_version")}") {
+                mappings("dev.lambdaurora:yalmm-mojbackward:${property("minecraft_version")}+build.$it")
+            }
+        })
+    } else {
+        findProperty("mappings_version")?.toString()?.takeUnless { it.isBlank() }?.let {
+            mappings(it)
         }
     }
+    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+    modImplementation("org.polyfrost.oneconfig:${property("minecraft_version")}-fabric:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:commands:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:config:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:config-impl:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:events:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:internal:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:ui:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:utils:1.0.0-alpha.192")
+    implementation("org.polyfrost.oneconfig:hud:1.0.0-alpha.192")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricAPI}")
+}
 
-    useDevAuth("1.2.1")
-    useMixinExtras("0.5.0")
+bloom {
+    replacement("@MOD_ID@", modid!!)
+    replacement("@MOD_NAME@", modname!!)
+    replacement("@MOD_VERSION@", modversion!!)
+}
 
-    disableRunConfigs(GameSide.SERVER)
+tasks.processResources {
+    val props = mapOf(
+        "mod_id" to modid,
+        "mod_name" to modname,
+        "mod_version" to modversion,
+        "mc_version" to mcversion,
+        "mc_range" to mcRange,
+        "loader_version" to providers.gradleProperty("loader_version").get(),
+        "fabric_api" to fabricAPI,
+    )
 
-    if (!mcData.isNeoForge) {
-        useMixinRefMap(modData.id)
-    }
+    inputs.properties(props)
 
-    if (mcData.isForge) {
-        useForgeMixin(modData.id)
+    filesMatching("fabric.mod.json") {
+        expand(props)
     }
 }
+
+val javaVersionStr = findProperty("java_version")?.toString() ?: "21"
+val javaVersionInt = javaVersionStr.toInt()
+
+val kotlinJvmTarget = when (javaVersionInt) {
+    21 -> JvmTarget.JVM_21
+    22 -> JvmTarget.JVM_22
+    23 -> JvmTarget.JVM_23
+    24 -> JvmTarget.JVM_24
+    25 -> JvmTarget.JVM_25
+    else -> JvmTarget.JVM_21
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(javaVersionInt)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions.jvmTarget.set(kotlinJvmTarget)
+}
+
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(javaVersionInt))
+    }
+}
+
+tasks.jar {
+    inputs.property("archivesName", base.archivesName)
+
+    from("LICENSE") {
+        rename { "${it}_${inputs.properties["archivesName"]}" }
+    }
+}
+
+fun <T> optionalProp(property: String, block: (String) -> T?): T? =
+    findProperty(property)?.toString()?.takeUnless { it.isBlank() }?.let(block)
