@@ -26,7 +26,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     @Suppress("UnstableApiUsage")
     override fun makeTree(): Tree {
         return super.makeTree().apply {
-            getSounds().forEach { (location, sound) ->
+            getSounds().forEach { (location, _) ->
                 val pathParts = location.path.split('.')
                 val groupName = pathParts.firstOrNull()?.toTitleCase() ?: "General"
 
@@ -47,9 +47,9 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                     ).apply {
                         visualizer = Visualizer.SliderVisualizer::class.java
                         subcategory = groupName
-                        metadata?.put("min", 0f)
-                        metadata?.put("max", 500f)
-                        metadata?.put("step", 5f)
+                        addMetadata("min", 0f)
+                        addMetadata("max", 500f)
+                        addMetadata("step", 5f)
                     }
                 )
             }
