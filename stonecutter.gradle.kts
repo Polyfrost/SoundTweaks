@@ -1,23 +1,22 @@
 plugins {
     id("dev.kikugie.stonecutter")
 }
-stonecutter active "26.1"
+
+stonecutter active "26.2"
 
 stonecutter parameters {
-    swaps["mod_version"] = "\"" + property("version") + "\";"
-    swaps["minecraft"] = "\"" + node.metadata.version + "\";"
+    swaps["mod_version"] = "\"${property("mod.version")}\";"
+    swaps["minecraft"] = "\"${node.metadata.version}\";"
+    constants["release"] = property("mod.id") != "template"
+    dependencies["fapi"] = node.project.property("deps.fabric_api") as String
 
-    replacements.regex {
-        direction = eval(current.version, "< 1.21.11")
-        replace("import net.minecraft.resources.Identifier(?!;)", "import net.minecraft.resources.ResourceLocation as Identifier")
-        reverse("import net.minecraft.resources.ResourceLocation as Identifier", "import net.minecraft.resources.Identifier")
-    }
-    replacements.regex {
-        direction = eval(current.version, "< 26.1")
-        id = "identifier"
-        replace(
-            "Identifier", "ResourceLocation",
-            "ResourceLocation", "Identifier"
-        )
+    replacements {
+        string(current.parsed >= "1.21.11") {
+            replace("ResourceLocation", "Identifier")
+        }
+
+        string(current.parsed >= "26.1") {
+            replace("classTweaker v2 named", "classTweaker v2 official")
+        }
     }
 }

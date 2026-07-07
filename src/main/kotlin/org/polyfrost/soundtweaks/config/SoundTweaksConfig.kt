@@ -1,6 +1,5 @@
 package org.polyfrost.soundtweaks.config
 
-import org.apache.commons.lang3.text.WordUtils
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
@@ -14,10 +13,11 @@ import org.polyfrost.soundtweaks.SoundTweaks.volumes
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
 
+    // TODO: Debug the below (does it still happen?)
     // This shit does not safe/load correctly and idfk how
     @Switch(
         title = "Remove Volume Cap",
-        description = "Allows sounds to bypass Minecrafts 100% volume limit.\nAlready played sounds require a restart to become louder.",
+        description = "Allows sounds to bypass Minecraft's 100% volume limit.\nAlready played sounds require a restart to become louder.",
         subcategory = "General"
     )
     @JvmField
@@ -56,5 +56,9 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
         }
     }
 
-    private fun String.toTitleCase() = WordUtils.capitalizeFully(this.replace("_", " "))
+    private fun String.toTitleCase() = replace("_", " ")
+        .split(" ")
+        .joinToString(" ") { word ->
+            word.lowercase().replaceFirstChar { it.titlecase() }
+        }
 }

@@ -1,8 +1,7 @@
 {
-    "compatibilityLevel": "JAVA_21",
+    "compatibilityLevel": "${java}",
     "minVersion": "0.8",
     "package": "org.polyfrost.soundtweaks.mixins",
-    "refmap": "mixins.${mod_id}.refmap.json",
     "client": [
         "AbstractSoundInstanceMixin",
         "SoundEngineMixin",

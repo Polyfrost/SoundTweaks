@@ -13,15 +13,16 @@ object SoundTweaks : ModInitializer {
     const val ID = "@MOD_ID@"
     const val NAME = "@MOD_NAME@"
     const val VERSION = "@MOD_VERSION@"
-    const val MC = "@MC_VERSION@"
 
     val volumes = mutableMapOf<Identifier, Float>()
 
     override fun onInitialize() {
+        // Event never fires on 1.21.1 and 1.21.4 (OneConfig #749)
         EventManager.register(ResourceFinishedLoading::class) { _ ->
-            config = SoundTweaksConfig()
+            if (config == null) {
+                config = SoundTweaksConfig()
+            }
             config?.preload()
-            println("meow")
         }
     }
 

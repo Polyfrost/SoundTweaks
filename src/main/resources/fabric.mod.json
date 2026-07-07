@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${mod_version}",
-    "name": "${mod_name}",
+    "id": "${id}",
+    "version": "${version}",
+    "name": "${name}",
     "authors": [
         "Polyfrost"
     ],
@@ -16,11 +16,11 @@
         ]
     },
     "mixins": [
-        "mixins.${mod_id}.json"
+        "${id}.mixins.json"
     ],
     "depends": {
-        "minecraft": "${mc_range}",
+        "minecraft": "${minecraft}",
         "fabricloader": ">=0.19.2",
-        "fabric-api": ">=${fabric_api}"
+        "fabric-api": "*"
     }
 }
