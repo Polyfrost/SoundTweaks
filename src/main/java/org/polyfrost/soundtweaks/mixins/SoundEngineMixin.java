@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SoundEngine.class)
 public class SoundEngineMixin {
-
     @WrapOperation(
         method = "calculateVolume(FLnet/minecraft/sounds/SoundSource;)F",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(FFF)F", ordinal = 0)
