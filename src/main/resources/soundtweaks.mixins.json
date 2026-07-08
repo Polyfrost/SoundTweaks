@@ -1,0 +1,10 @@
+{
+    "compatibilityLevel": "${java}",
+    "minVersion": "0.8",
+    "package": "org.polyfrost.soundtweaks.mixins",
+    "client": [
+        "AbstractSoundInstanceMixin",
+        "SoundEngineMixin",
+        "SoundManagerAccessor"
+    ]
+}
