@@ -48,8 +48,8 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         visualizer = Visualizer.SliderVisualizer::class.java
                         subcategory = groupName
                         addMetadata("min", 0f)
-                        addMetadata("max", 500f)
-                        addMetadata("step", 5f)
+                        addMetadata("max", 200f)
+                        addMetadata("step", 0f)
                     }
                 )
             }
