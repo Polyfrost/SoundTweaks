@@ -16,11 +16,12 @@
         ]
     },
     "mixins": [
-        "${id}.mixins.json"
+        "soundtweaks.mixins.json"
     ],
     "depends": {
         "minecraft": "${minecraft}",
         "fabricloader": ">=0.19.2",
+        "oneconfigv1": ">=1.0.0-beta.7",
         "fabric-api": "*"
     }
 }
