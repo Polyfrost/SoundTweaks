@@ -1,4 +1,5 @@
 {
+    "required": true,
     "compatibilityLevel": "${java}",
     "minVersion": "0.8",
     "package": "org.polyfrost.soundtweaks.mixins",
@@ -6,5 +7,8 @@
         "AbstractSoundInstanceMixin",
         "SoundEngineMixin",
         "SoundManagerAccessor"
-    ]
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }

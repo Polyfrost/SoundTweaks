@@ -1,6 +1,9 @@
 .gradle
 build/
 run/
+.fabric/
+versions/*/logs/
+versions/*/mods/
 .idea/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
