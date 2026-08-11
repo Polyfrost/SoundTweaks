@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
-    "id": "${id}",
-    "version": "${version}",
-    "name": "${name}",
+    "id": "${mod_id}",
+    "name": "${mod_name}",
+    "version": "${mod_version}",
     "authors": [
         "Polyfrost"
     ],
@@ -16,11 +16,12 @@
         ]
     },
     "mixins": [
-        "${id}.mixins.json"
+        "soundtweaks.mixins.json"
     ],
     "depends": {
-        "minecraft": "${minecraft}",
-        "fabricloader": ">=0.19.2",
-        "fabric-api": "*"
+        "minecraft": "${minecraft_version_range}",
+        "fabricloader": ">=${loader_version}",
+        "fabric-api": "*",
+        "fabric-language-kotlin": "*"
     }
 }

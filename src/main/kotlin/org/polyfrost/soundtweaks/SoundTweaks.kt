@@ -16,7 +16,7 @@ object SoundTweaks : ModInitializer {
     val volumes = mutableMapOf<Identifier, Float>()
 
     override fun onInitialize() {
-        // Event never fires on 1.21.1 and 1.21.4 (OneConfig #749)
+        // Never fires on 1.21.1 and 1.21.4 see OneConfig issue 749
         EventManager.register(ResourceFinishedLoading::class) { _ ->
             if (config == null) {
                 config = SoundTweaksConfig()
