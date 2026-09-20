@@ -15,6 +15,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
 
     // TODO: Debug the below (does it still happen?)
     // This shit does not safe/load correctly and idfk how
+    // might have something to do with @JvmField
     @Switch(
         title = "Remove Volume Cap",
         description = "Allows sounds to bypass Minecraft's 100% volume limit.\nAlready played sounds require a restart to become louder.",
