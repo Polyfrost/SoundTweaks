@@ -32,9 +32,9 @@ val modid: String = sc.properties["mod.id"]
 val modname: String = sc.properties["mod.name"]
 val modversion: String = sc.properties["mod.version"]
 val mcversion: String = sc.current.version
+val mcDependencyVersion: String = sc.properties.getOrNull<String>("deps.minecraft") ?: mcversion
 val versionrange: String = sc.properties["mod.mc_compat"]
 val loaderversion: String = sc.properties["deps.fabric_loader"]
-val flkversion: String = sc.properties["deps.fabric_language_kotlin"]
 val oneconfigversion: String = sc.properties["deps.oneconfig"]
 val loader = if (isOrnithe) "ornithe" else "fabric"
 
@@ -58,6 +58,7 @@ repositories {
         filter { groups.forEach(::includeGroup) }
     }
 
+    mavenLocal()
     mavenCentral()
     google()
     maven("https://repo.polyfrost.org/releases") { name = "Polyfrost Releases" }
@@ -71,13 +72,13 @@ repositories {
     }
     strictMaven("https://maven.deftu.dev/releases", "Deftu", "dev.deftu")
     strictMaven("https://maven.terraformersmc.com/", "TerraformersMC", "com.terraformersmc")
-    strictMaven("https://maven.fabricmc.net/", "FabricMC", "net.fabricmc", "net.fabricmc.fabric-api")
+    strictMaven("https://maven.fabricmc.net/", "FabricMC", "net.fabricmc")
     strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:$mcversion")
+    minecraft("com.mojang:minecraft:$mcDependencyVersion")
     if (isOrnithe) {
         mappings(ploceus!!.layeredMappings {
             mappings("net.ornithemc:feather-gen2:$mcversion+build.${sc.properties["feather_build"] as String}:v2") {
@@ -91,15 +92,13 @@ dependencies {
     }
 
     modImplementation("net.fabricmc:fabric-loader:$loaderversion")
-    modImplementation("net.fabricmc:fabric-language-kotlin:$flkversion")
     modImplementation("org.polyfrost.oneconfig:$mcversion-$loader:$oneconfigversion")
     for (module in arrayOf("commands", "config", "config-impl", "events", "internal", "ui", "utils", "hud")) {
         implementation("org.polyfrost.oneconfig:$module:$oneconfigversion")
     }
 
-    if (!isOrnithe) {
-        val fapiversion: String = sc.properties["deps.fabric_api"]
-        modImplementation("net.fabricmc.fabric-api:fabric-api:$fapiversion")
+    sc.properties.getOrNull<String>("deps.fabric_api")?.let {
+        modImplementation("net.fabricmc.fabric-api:fabric-api:$it")
     }
 
     testImplementation("org.junit.jupiter:junit-jupiter:${sc.properties.get<String>("deps.junit")}")
@@ -172,6 +171,11 @@ tasks {
         inputs.properties(props)
 
         filesMatching("fabric.mod.json") { expand(props) }
+
+        // mixin compatibilityLevel has to track the toolchain because 26.1+ builds on Java 25
+        val mixinJava = "JAVA_${requiredJava.majorVersion}"
+        inputs.property("mixinJava", mixinJava)
+        filesMatching("*.mixins.json5") { expand("java" to mixinJava) }
     }
 
     jar {
@@ -193,7 +197,7 @@ tasks {
 }
 
 val modrinthId = listOf("oneconfig.publish.modrinth", "publish.modrinth")
-    .firstNotNullOfOrNull { findProperty(it) }?.toString()?.takeIf { it.isNotBlank() && it != "N/A" }
+    .firstNotNullOfOrNull { findProperty(it) }?.toString()?.takeIf { it.isNotBlank() }
 val modrinthToken = listOf("oneconfig.publish.modrinth.token", "publish.modrinth.token", "modrinth.token")
     .firstNotNullOfOrNull { findProperty(it) }?.toString()?.takeIf { it.isNotBlank() }
 
@@ -201,13 +205,8 @@ val changelogs = rootProject.file("CHANGELOG.md").takeIf { it.exists() }?.readTe
 
 val validateChangelog = tasks.register("validateChangelog") {
     description = "Validates that the changelog is written for the current version."
-    inputs.property("version", modversion)
-    inputs.property("changelog", changelogs)
-
-    doLast {
-        if (!changelogs.contains(modversion)) {
-            throw GradleException("Changelog for version $modversion not found.")
-        }
+    if (!changelogs.contains(modversion)) {
+        throw GradleException("Changelog for version $modversion not found.")
     }
 }
 
@@ -224,11 +223,7 @@ publishMods {
     displayName = modversion
     version = "v$modversion"
     changelog = changelogs
-    type = when {
-        "beta" in modversion.lowercase() -> BETA
-        "alpha" in modversion.lowercase() -> ALPHA
-        else -> STABLE
-    }
+    type = STABLE
 
     modLoaders.add(loader)
 
@@ -242,6 +237,7 @@ publishMods {
             minecraftVersions.addAll(compatibleVersions.ifEmpty { listOf(mcversion) })
 
             requires("oneconfig", "fabric-language-kotlin")
+            if (!isOrnithe) requires("fabric-api")
         }
     }
 }
