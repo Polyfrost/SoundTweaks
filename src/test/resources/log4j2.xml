@@ -1,0 +1,2 @@
+<!-- Shadows the 1.8.9 Minecraft jar's log4j2.xml, which would otherwise make fabric-loader-junit treat that jar as a logging library and fail to locate the game -->
+<Configuration/>

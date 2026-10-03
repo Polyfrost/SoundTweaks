@@ -1,13 +1,16 @@
 package org.polyfrost.soundtweaks.test
 
-import net.minecraft.SharedConstants
-import net.minecraft.server.Bootstrap
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.MixinEnvironment.Option
 import org.spongepowered.asm.mixin.transformer.IMixinTransformer
+
+//? if > 1.8.9 {
+import net.minecraft.SharedConstants
+import net.minecraft.server.Bootstrap
+//?}
 
 /**
  * Audits mixins without launching a full Minecraft client
@@ -19,8 +22,10 @@ class MixinTest {
         @JvmStatic
         @BeforeAll
         fun setupEnvironment() {
+            //? if > 1.8.9 {
             SharedConstants.tryDetectVersion()
             Bootstrap.bootStrap()
+            //?}
         }
     }
 
