@@ -4,6 +4,10 @@
     "minVersion": "0.8",
     "package": "org.polyfrost.soundtweaks.mixins",
     "client": [
+        //? if 1.8.9 {
+        /*"SoundRegistryAccessor",
+        "SoundManagerMixin",
+        *///?}
         "AbstractSoundInstanceMixin",
         "SoundEngineMixin",
         "SoundManagerAccessor"

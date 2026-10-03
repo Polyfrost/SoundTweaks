@@ -1,7 +1,13 @@
 package org.polyfrost.soundtweaks.mixins;
 
-import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+//? if 1.8.9 {
+/*import net.minecraft.client.sound.instance.AbstractSoundInstance;
 import net.minecraft.resources.Identifier;
+*///?} else {
+ import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+ import net.minecraft.resources.Identifier;
+//?}
+
 import org.polyfrost.soundtweaks.SoundTweaks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
