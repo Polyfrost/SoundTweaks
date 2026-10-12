@@ -22,4 +22,5 @@ stonecutter parameters {
 
 stonecutter tasks {
     order("publishModrinth")
+    order("publishCurseforge")
 }
