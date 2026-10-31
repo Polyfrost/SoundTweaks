@@ -25,14 +25,14 @@ public abstract class AbstractSoundInstanceMixin {
 
     @Inject(method = "getVolume", at = @At("RETURN"), cancellable = true)
     private void soundtweaks$modifyVolume(CallbackInfoReturnable<Float> cir) {
-        //~ if >= 1.21.11 'getLocation' -> 'getIdentifier'
-        Float modifier = SoundTweaks.INSTANCE.getVolumes().get(getIdentifier());
+        if (SoundTweaks.getConfig() != null && SoundTweaks.getConfig().getEnabled()) {
+            //~ if >=1.21.11 'getLocation' -> 'getIdentifier'
+            Float modifier = SoundTweaks.INSTANCE.getVolumes().get(getIdentifier());
+            if (modifier == null || modifier == 100.0f) {
+                return;
+            }
 
-        if (modifier == null || modifier == 100.0f) {
-            return;
+            cir.setReturnValue(cir.getReturnValueF() * (modifier / 100));
         }
-
-        cir.setReturnValue(cir.getReturnValueF() * (modifier / 100));
     }
-
 }

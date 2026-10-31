@@ -5,13 +5,18 @@ import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
 import org.polyfrost.oneconfig.api.config.v1.Visualizer
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
-import org.polyfrost.oneconfig.api.config.v1.dsl.subcategory
+import org.polyfrost.oneconfig.api.config.v1.dsl.category
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
+    @Switch(
+        title = "Enabled",
+        subcategory = "General"
+    )
+    var enabled = true
 
     // TODO: Debug the below (does it still happen?)
     // This shit does not safe/load correctly and idfk how
@@ -47,7 +52,8 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         type = Float::class.javaObjectType
                     ).apply {
                         visualizer = Visualizer.SliderVisualizer::class.java
-                        subcategory = groupName
+                        // thank you scope
+                        this.category = groupName
                         addMetadata("min", 0f)
                         addMetadata("max", 200f)
                         addMetadata("step", 0f)
