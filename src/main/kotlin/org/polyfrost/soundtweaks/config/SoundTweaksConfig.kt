@@ -1,5 +1,6 @@
 package org.polyfrost.soundtweaks.config
 
+import net.minecraft.resources.Identifier
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
@@ -7,9 +8,11 @@ import org.polyfrost.oneconfig.api.config.v1.Visualizer
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
 import org.polyfrost.oneconfig.api.config.v1.dsl.category
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
+import org.polyfrost.oneconfig.api.notifications.v1.Notifications
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
+import java.nio.file.Path
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
     @Switch(
@@ -59,8 +62,32 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         addMetadata("step", 0f)
                     }
                 )
+                put(
+                    Properties.dummy(
+                        location.toString().replace(":", "_").replace(".", "_"),
+                        "Play $optionTitle",
+                        description = "Plays $location at the given volume and default pitch.",
+
+                    ).apply {
+                        visualizer = Visualizer.ButtonVisualizer::class.java
+                        // thank you scope
+                        this.category = groupName
+                        addMetadata("runnable", Runnable {
+                            runCatching {
+                                playSoundPreview(location)
+                            }.onFailure {
+                                Notifications.error("SoundTweaks", "Failed to play sound $location")
+                                SoundTweaks.LOGGER.warn("Failed to play sound {}", location)
+                            }
+                        })
+                    }
+                )
             }
         }
+    }
+
+    private fun playSoundPreview(location: Identifier) {
+        //@TODO implement
     }
 
     private fun String.toTitleCase() = replace("_", " ")
