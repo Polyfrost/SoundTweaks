@@ -1,11 +1,15 @@
 package org.polyfrost.soundtweaks.config
 
 import net.minecraft.client.Minecraft
+import net.minecraft.resources.Identifier
+//? if > 1.8.9 {
 import net.minecraft.client.resources.sounds.SimpleSoundInstance
 import net.minecraft.client.resources.sounds.SoundInstance
-import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
+//?} else {
+// import net.minecraft.client.sound.instance.SimpleSoundInstance
+//?}
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
@@ -92,11 +96,14 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     }
 
     private fun playSoundPreview(location: Identifier) {
-        //? if 26.3 {
-        val sound = SoundEvent.createVariableRangeEvent(location)
-        val instance = SimpleSoundInstance(sound.location(), SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
+        //? if > 1.8.9 {
+         val sound = SoundEvent.createVariableRangeEvent(location)
+         val instance = SimpleSoundInstance(sound.location(), SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
+        //?} else {
+        /*val instance = SimpleSoundInstance(location, 1f, 1f, 0f, 0f, 0f)
+        *///?}
         Minecraft.getInstance().soundManager.play(instance)
-        //?}
+
     }
 
     private fun String.toTitleCase() = replace("_", " ")
