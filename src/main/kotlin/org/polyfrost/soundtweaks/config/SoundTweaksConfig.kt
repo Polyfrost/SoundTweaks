@@ -6,7 +6,6 @@ import org.polyfrost.oneconfig.api.config.v1.Tree
 import org.polyfrost.oneconfig.api.config.v1.Visualizer
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
 import org.polyfrost.oneconfig.api.config.v1.dsl.category
-import org.polyfrost.oneconfig.api.config.v1.dsl.subcategory
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
@@ -45,7 +44,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         location.toString().replace(":", "_").replace(".", "_"),
                         optionTitle,
                         description = "Internal ID: $location",
-                        type = Float::class.javaObjectType,
+                        type = Float::class.javaObjectType
                     ).apply {
                         visualizer = Visualizer.SliderVisualizer::class.java
                         // thank you scope
