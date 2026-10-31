@@ -1,6 +1,11 @@
 package org.polyfrost.soundtweaks.config
 
+import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.sounds.SimpleSoundInstance
+import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.resources.Identifier
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundSource
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
@@ -12,7 +17,6 @@ import org.polyfrost.oneconfig.api.notifications.v1.Notifications
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
-import java.nio.file.Path
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
     @Switch(
@@ -64,7 +68,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                 )
                 put(
                     Properties.dummy(
-                        location.toString().replace(":", "_").replace(".", "_"),
+                        location.toString().replace(":", "_").replace(".", "_") + "_button",
                         "Play $optionTitle",
                         description = "Plays $location at the given volume and default pitch.",
 
@@ -80,6 +84,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                                 SoundTweaks.LOGGER.warn("Failed to play sound {}", location)
                             }
                         })
+                        addMetadata("textKey", "Play")
                     }
                 )
             }
@@ -87,7 +92,11 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     }
 
     private fun playSoundPreview(location: Identifier) {
-        //@TODO implement
+        //? if 26.3 {
+        val sound = SoundEvent.createVariableRangeEvent(location)
+        val instance = SimpleSoundInstance(sound.location(), SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
+        Minecraft.getInstance().soundManager.play(instance)
+        //?}
     }
 
     private fun String.toTitleCase() = replace("_", " ")
