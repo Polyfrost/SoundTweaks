@@ -95,6 +95,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
         }
     }
 
+    //@TODO sometimes doesn't work on 1.8.9
     private fun playSoundPreview(location: Identifier) {
         //? if > 1.8.9 {
          val sound = SoundEvent.createVariableRangeEvent(location)
