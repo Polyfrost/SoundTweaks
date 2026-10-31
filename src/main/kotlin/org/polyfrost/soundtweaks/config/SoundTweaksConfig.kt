@@ -12,6 +12,11 @@ import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
+    @Switch(
+        title = "Enabled",
+        subcategory = "General"
+    )
+    var enabled = true
 
     // TODO: Debug the below (does it still happen?)
     // This shit does not safe/load correctly and idfk how
