@@ -30,7 +30,7 @@ public class SoundEngineMixin {
     )
     private float soundtweaks$uncapVolume(float f, float g, float h, Operation<Float> original) {
         //?}
-        if (SoundTweaks.getConfig() != null && SoundTweaks.getConfig().removeVolumeCap) {
+        if (SoundTweaks.getConfig() != null && SoundTweaks.getConfig().getEnabled() && SoundTweaks.getConfig().removeVolumeCap) {
             return Math.max(f, g);
         }
         return original.call(f, g, h);

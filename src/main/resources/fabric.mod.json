@@ -6,6 +6,9 @@
     "authors": [
         "Polyfrost"
     ],
+    "contributors": [
+        "Yedel"
+    ],
     "environment": "client",
     "entrypoints": {
         "main": [
