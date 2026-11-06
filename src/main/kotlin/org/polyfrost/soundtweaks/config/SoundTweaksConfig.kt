@@ -1,11 +1,13 @@
 package org.polyfrost.soundtweaks.config
 
+import net.fabricmc.loader.api.FabricLoader
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
 import org.polyfrost.oneconfig.api.config.v1.Visualizer
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
 import org.polyfrost.oneconfig.api.config.v1.dsl.category
+import org.polyfrost.oneconfig.api.config.v1.dsl.subcategory
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
@@ -54,6 +56,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         visualizer = Visualizer.SliderVisualizer::class.java
                         // thank you scope
                         this.category = groupName
+                        subcategory = FabricLoader.getInstance().getModContainer(location.namespace).orElse(null)?.metadata?.name ?: location.namespace.toTitleCase()
                         addMetadata("min", 0f)
                         addMetadata("max", 200f)
                         addMetadata("step", 0f)
