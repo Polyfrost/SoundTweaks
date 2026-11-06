@@ -34,7 +34,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     @Suppress("UnstableApiUsage")
     override fun makeTree(): Tree {
         return super.makeTree().apply {
-            getSounds().forEach { (location, _) ->
+            getSounds().keys.sortedBy {it.namespace != "minecraft" }. forEach { location ->
                 val pathParts = location.path.split('.')
                 val groupName = pathParts.firstOrNull()?.toTitleCase() ?: "General"
 
