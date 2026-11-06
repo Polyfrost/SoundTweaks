@@ -96,12 +96,11 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     }
 
     //@TODO sometimes doesn't work on 1.8.9
-    //@TODO doesn't compile on 1.21.1
     private fun playSoundPreview(location: Identifier) {
         //? if > 1.8.9 {
          val instance = SimpleSoundInstance(location, SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
         //?} else {
-        /*val instance = SimpleSoundInstance(location, 1f, 1f, 0f, 0f, 0f)
+        /*val instance = SimpleSoundInstance.of(location, 1f)
         *///?}
         Minecraft.getInstance().soundManager.play(instance)
 
