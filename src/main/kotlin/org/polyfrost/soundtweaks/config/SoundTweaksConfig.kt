@@ -73,7 +73,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                 put(
                     Properties.dummy(
                         location.toString().replace(":", "_").replace(".", "_") + "_button",
-                        "Previe $optionTitle",
+                        "Preview $optionTitle",
                         description = "Plays $location at the given volume and default pitch.",
 
                     ).apply {
