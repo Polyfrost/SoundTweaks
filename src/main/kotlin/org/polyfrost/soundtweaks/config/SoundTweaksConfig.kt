@@ -73,7 +73,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                 put(
                     Properties.dummy(
                         location.toString().replace(":", "_").replace(".", "_") + "_button",
-                        "Play $optionTitle",
+                        "Previe $optionTitle",
                         description = "Plays $location at the given volume and default pitch.",
 
                     ).apply {
@@ -88,7 +88,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                                 SoundTweaks.LOGGER.warn("Failed to play sound {}", location)
                             }
                         })
-                        addMetadata("textKey", "Play")
+                        addMetadata("textKey", "Preview")
                     }
                 )
             }
