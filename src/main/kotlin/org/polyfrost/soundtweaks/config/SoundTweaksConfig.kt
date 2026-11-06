@@ -99,8 +99,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
     //@TODO doesn't compile on 1.21.1
     private fun playSoundPreview(location: Identifier) {
         //? if > 1.8.9 {
-         val sound = SoundEvent.createVariableRangeEvent(location)
-         val instance = SimpleSoundInstance(sound.location(), SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
+         val instance = SimpleSoundInstance(location, SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
         //?} else {
         /*val instance = SimpleSoundInstance(location, 1f, 1f, 0f, 0f, 0f)
         *///?}
