@@ -58,7 +58,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         { volumes[location] ?: 100.0f },
                         { volumes[location] = it },
                         location.toString().replace(":", "_").replace(".", "_"),
-                        optionTitle,
+                        "$optionTitle Volume",
                         description = "Internal ID: $location",
                         type = Float::class.javaObjectType
                     ).apply {
