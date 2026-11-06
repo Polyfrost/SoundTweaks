@@ -18,9 +18,11 @@ import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
 import org.polyfrost.oneconfig.api.config.v1.dsl.category
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
 import org.polyfrost.oneconfig.api.notifications.v1.Notifications
+import org.polyfrost.oneconfig.utils.v1.Multithreading
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
+import java.util.concurrent.TimeUnit
 
 class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Category.QOL) {
     @Switch(
@@ -103,7 +105,11 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
         /*val instance = SimpleSoundInstance.of(location, 1f)
         *///?}
         Minecraft.getInstance().soundManager.play(instance)
-
+        Multithreading.schedule({
+            Minecraft.getInstance().schedule {
+                Minecraft.getInstance().soundManager.stop(instance)
+            }
+        }, 5000, TimeUnit.MILLISECONDS)
     }
 
     private fun String.toTitleCase() = replace("_", " ")
