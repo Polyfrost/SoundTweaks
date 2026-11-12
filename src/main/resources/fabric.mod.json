@@ -4,7 +4,7 @@
     "name": "${mod_name}",
     "version": "${mod_version}",
     "authors": [
-        "Polyfrost"
+        "Polyfrost", "j10a1n15"
     ],
     "contributors": [
         "Yedel"
