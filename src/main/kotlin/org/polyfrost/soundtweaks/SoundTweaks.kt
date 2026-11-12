@@ -3,6 +3,7 @@ package org.polyfrost.soundtweaks
 import net.fabricmc.api.ModInitializer
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.Identifier
+import org.apache.logging.log4j.LogManager
 import org.polyfrost.oneconfig.api.event.v1.EventManager
 import org.polyfrost.oneconfig.api.event.v1.events.InitializationEvent
 import org.polyfrost.oneconfig.api.event.v1.events.ResourceFinishedLoading
@@ -12,6 +13,7 @@ import org.polyfrost.soundtweaks.mixins.SoundManagerAccessor
 //import org.polyfrost.soundtweaks.mixins.SoundRegistryAccessor
 
 object SoundTweaks : ModInitializer {
+    val LOGGER = LogManager.getLogger("SoundTweaks")
     const val ID = "@MOD_ID@"
     const val NAME = "@MOD_NAME@"
 
