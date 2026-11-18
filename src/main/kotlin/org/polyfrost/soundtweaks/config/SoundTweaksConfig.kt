@@ -1,5 +1,15 @@
 package org.polyfrost.soundtweaks.config
 
+import net.minecraft.client.Minecraft
+import net.minecraft.resources.Identifier
+//? if > 1.8.9 {
+import net.minecraft.client.resources.sounds.SimpleSoundInstance
+import net.minecraft.client.resources.sounds.SoundInstance
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundSource
+//?} else {
+// import net.minecraft.client.sound.instance.SimpleSoundInstance
+//?}
 import org.polyfrost.oneconfig.api.config.v1.Config
 import org.polyfrost.oneconfig.api.config.v1.Properties
 import org.polyfrost.oneconfig.api.config.v1.Tree
@@ -7,6 +17,7 @@ import org.polyfrost.oneconfig.api.config.v1.Visualizer
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
 import org.polyfrost.oneconfig.api.config.v1.dsl.category
 import org.polyfrost.oneconfig.api.config.v1.dsl.visualizer
+import org.polyfrost.oneconfig.api.notifications.v1.Notifications
 import org.polyfrost.soundtweaks.SoundTweaks
 import org.polyfrost.soundtweaks.SoundTweaks.getSounds
 import org.polyfrost.soundtweaks.SoundTweaks.volumes
@@ -47,7 +58,7 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         { volumes[location] ?: 100.0f },
                         { volumes[location] = it },
                         location.toString().replace(":", "_").replace(".", "_"),
-                        optionTitle,
+                        "$optionTitle Volume",
                         description = "Internal ID: $location",
                         type = Float::class.javaObjectType
                     ).apply {
@@ -59,8 +70,40 @@ class SoundTweaksConfig : Config("${SoundTweaks.ID}.json", SoundTweaks.NAME, Cat
                         addMetadata("step", 0f)
                     }
                 )
+                put(
+                    Properties.dummy(
+                        location.toString().replace(":", "_").replace(".", "_") + "_button",
+                        "Preview $optionTitle",
+                        description = "Plays $location at the given volume and default pitch.",
+
+                    ).apply {
+                        visualizer = Visualizer.ButtonVisualizer::class.java
+                        // thank you scope
+                        this.category = groupName
+                        addMetadata("runnable", Runnable {
+                            runCatching {
+                                playSoundPreview(location)
+                            }.onFailure {
+                                Notifications.error("SoundTweaks", "Failed to play sound $location")
+                                SoundTweaks.LOGGER.warn("Failed to play sound {}", location)
+                            }
+                        })
+                        addMetadata("textKey", "Preview")
+                    }
+                )
             }
         }
+    }
+
+    //@TODO sometimes doesn't work on 1.8.9
+    private fun playSoundPreview(location: Identifier) {
+        //? if > 1.8.9 {
+         val instance = SimpleSoundInstance(location, SoundSource.MASTER, 1f, 1f, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true)
+        //?} else {
+        /*val instance = SimpleSoundInstance.of(location, 1f)
+        *///?}
+        Minecraft.getInstance().soundManager.play(instance)
+
     }
 
     private fun String.toTitleCase() = replace("_", " ")
